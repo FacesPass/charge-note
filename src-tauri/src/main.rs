@@ -3,8 +3,17 @@
     windows_subsystem = "windows"
 )]
 
+pub mod libs;
+use libs::project::{
+    create_menu, create_system_tray_menu, handle_menu_event, handle_system_tray_event,
+};
+
 fn main() {
     tauri::Builder::default()
+        .system_tray(create_system_tray_menu())
+        .on_system_tray_event(handle_system_tray_event())
+        .menu(create_menu())
+        .on_menu_event(handle_menu_event())
         .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .expect("启动应用出错");
 }
