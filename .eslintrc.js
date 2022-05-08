@@ -17,7 +17,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
     'plugin:react/recommended',
-    'plugin:prettier/recommended',
     'plugin:react-hooks/recommended',
   ],
   root: true,
@@ -26,15 +25,6 @@ module.exports = {
     jest: true,
   },
   rules: {
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-        semi: false,
-        endOfLine: 'auto',
-        jsxSingleQuote: true,
-      },
-    ],
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',

@@ -14,9 +14,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "baseUrl": "./",
     "jsx": "react-jsx",
     "paths": {
-      "@": ["./src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src", "commitlint.config.js"]
