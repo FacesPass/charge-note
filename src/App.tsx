@@ -2,6 +2,7 @@ import React from 'react'
 import logo from './logo.svg'
 import './App.css'
 
+const t = 'test'
 function App() {
   return (
     <div className='App'>
