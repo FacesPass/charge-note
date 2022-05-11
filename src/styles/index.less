@@ -1,0 +1,25 @@
+@headerHeight: 30px;
+
+body {
+  height: auto;
+  @backgroundColor: #fff;
+  @backgroundLinePercent: 5%;
+  background-color: @backgroundColor;
+  min-width: 400px;
+  overflow: hidden;
+}
+
+:root {
+  .iconfont {
+    margin-right: 10px;
+  }
+}
+
+.ant-message {
+  top: @headerHeight;
+  z-index: 9999;
+}
+
+.ant-tooltip {
+  z-index: 99999;
+}

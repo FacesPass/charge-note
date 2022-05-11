@@ -1,13 +1,12 @@
 use std::process;
 use tauri::{
-    App, AppHandle, CustomMenuItem, Manager, Menu, SystemTray, SystemTrayEvent, SystemTrayMenu,
+    AppHandle, CustomMenuItem, Manager, Menu, SystemTray, SystemTrayEvent, SystemTrayMenu,
     SystemTrayMenuItem, Window, WindowMenuEvent,
 };
 
 /// 创建自定义菜单
 pub fn create_menu() -> Menu {
     let menu = Menu::new();
-
     menu
 }
 

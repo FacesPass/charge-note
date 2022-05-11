@@ -3,6 +3,7 @@
     windows_subsystem = "windows"
 )]
 
+use tauri::{api::dialog, Manager};
 pub mod libs;
 use libs::project::{
     create_menu, create_system_tray_menu, handle_menu_event, handle_system_tray_event,

@@ -28,6 +28,7 @@ module.exports = {
     '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/no-var-requires': 'off',
     //  有些合理的也会报错
     '@typescript-eslint/ban-ts-comment': 'off',

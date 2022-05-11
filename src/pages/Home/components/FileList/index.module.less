@@ -1,0 +1,42 @@
+.container {
+  overflow: auto;
+  height: 100vh;
+  padding: 0 15px;
+  padding-bottom: 70px;
+}
+
+.listItem {
+  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px;
+  margin: 20px 0;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  background-color: #fff;
+  cursor: pointer;
+
+  &:first-child {
+    margin-top: 10px;
+  }
+}
+
+.name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-right: 15px;
+}
+
+.tools {
+  display: flex;
+}
+
+.tip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #a7a7a7;
+}

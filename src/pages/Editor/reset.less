@@ -1,0 +1,19 @@
+@import url('../../styles/index.less');
+
+.bytemd {
+  height: calc(100vh - @headerHeight);
+
+  .bytemd-toolbar-right {
+    .bytemd-tippy-right {
+      &:nth-last-child(-n + 2) {
+        display: none;
+      }
+    }
+  }
+  @media screen and (max-width: 800px) {
+    height: calc(100vh - @headerHeight + 32px);
+    .bytemd-toolbar {
+      display: none;
+    }
+  }
+}
