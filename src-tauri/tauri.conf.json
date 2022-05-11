@@ -1,6 +1,6 @@
 {
   "package": {
-    "productName": "notepad",
+    "productName": "Charge Note",
     "version": "0.1.0"
   },
   "build": {
@@ -55,13 +55,13 @@
     },
     "windows": [
       {
+        "title": "Charge Note",
         "width": 400,
         "height": 600,
         "resizable": false,
         "fullscreen": false,
         "center": true,
-        "label": "main",
-        "decorations": false
+        "label": "main"
       }
     ],
     "security": {

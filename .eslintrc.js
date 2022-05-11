@@ -29,6 +29,8 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-var-requires': 'off',
+    //  有些合理的也会报错
+    '@typescript-eslint/ban-ts-comment': 'off',
     // 有时候会产生错误的依赖校验
     'react-hooks/exhaustive-deps': 'off',
   },
