@@ -62,8 +62,8 @@ const Editor = () => {
 
       const markdownBody = document.querySelector('.markdown-body') as HTMLElement
       markdownBody.style.overflowY = 'auto'
-      markdownBody.style.height = '100vh'
-      markdownBody.style.padding = '0 20px 50px'
+      markdownBody.style.height = 'calc(100vh - 30px)'
+      markdownBody.style.padding = '0 20px 20px'
     }
   }
 

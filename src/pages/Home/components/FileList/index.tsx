@@ -2,9 +2,8 @@ import React, { FC, memo } from 'react'
 import Icon from '@/components/Icon'
 import { isEndsWithMd } from '@/libs/utils/file'
 import { fs } from '@tauri-apps/api'
-import { Popconfirm, Tooltip } from 'antd'
+import { Tooltip } from 'antd'
 import styles from './index.module.less'
-import { WarningOutlined } from '@ant-design/icons'
 
 interface IProps {
   className?: string

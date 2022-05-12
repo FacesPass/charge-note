@@ -56,8 +56,8 @@
     "windows": [
       {
         "title": "Charge Note",
-        "width": 420,
-        "minWidth": 420,
+        "width": 400,
+        "minWidth": 400,
         "height": 600,
         "minHeight": 600,
         "resizable": true,

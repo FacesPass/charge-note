@@ -81,29 +81,31 @@ function Header() {
             />
           </Tooltip>
 
-          <Tooltip
-            title={`当前为${editorMode === 'view' ? '阅读' : '编辑'}模式`}
-            placement='bottomLeft'
-            arrowPointAtCenter
-          >
-            <Button
-              icon={
-                <Icon
-                  size={18}
-                  className={editorMode === 'view' ? 'icon-chakan' : 'icon-meiridati'}
-                />
-              }
-              type='text'
-              onClick={() => {
-                if (editorMode === 'view') {
-                  store.setState('editorMode', 'edit')
-                } else {
-                  store.setState('editorMode', 'view')
+          {isInEditor && (
+            <Tooltip
+              title={`当前为${editorMode === 'view' ? '阅读' : '编辑'}模式`}
+              placement='bottomLeft'
+              arrowPointAtCenter
+            >
+              <Button
+                icon={
+                  <Icon
+                    size={18}
+                    className={editorMode === 'view' ? 'icon-chakan' : 'icon-meiridati'}
+                  />
                 }
-                eventEmitter.emit(MenuEvent.ToggleEditorMode)
-              }}
-            />
-          </Tooltip>
+                type='text'
+                onClick={() => {
+                  if (editorMode === 'view') {
+                    store.setState('editorMode', 'edit')
+                  } else {
+                    store.setState('editorMode', 'view')
+                  }
+                  eventEmitter.emit(MenuEvent.ToggleEditorMode)
+                }}
+              />
+            </Tooltip>
+          )}
         </div>
       </div>
       <div className={styles.placeholder}></div>
