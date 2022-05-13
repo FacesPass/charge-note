@@ -22,7 +22,7 @@ class GlobalStore {
   }
 
   async updateFileList(dirPath: string) {
-    const fileList = await fs.readDir(dirPath, { recursive: true })
+    const fileList = await fs.readDir(dirPath)
     this.state.fileList = fileList
   }
 }

@@ -15,15 +15,12 @@ function Home() {
   const store = useGlobalStore()
   const navigate = useNavigate()
   const storeFileList = store.getState('fileList')
-  const listShowMode = store.getState('listShowMode')
 
   useEffect(() => {
-    if (listShowMode === 'flat') {
-      setTimeout(() => {
-        tracingHeightLayout()
-      }, 0)
-    }
-  }, [storeFileList, listShowMode])
+    setTimeout(() => {
+      tracingHeightLayout()
+    }, 0)
+  }, [storeFileList])
 
   const handleClickItem = async ({ children, path, name }: fs.FileEntry) => {
     if (!children) {
@@ -69,18 +66,11 @@ function Home() {
 
   return (
     <>
-      <div style={{ display: listShowMode === 'flat' ? 'block' : 'none' }}>
-        <PathTracing className='path-tracing' />
-        <FlatList
-          className='file-list'
-          fileList={storeFileList}
-          onClickItem={handleClickItem}
-        />
-      </div>
-      <TreeList
-        style={{ display: listShowMode === 'tree' ? 'block' : 'none' }}
+      <PathTracing className='path-tracing' />
+      <FlatList
+        className='file-list'
         fileList={storeFileList}
-        onClickFile={handleOpenFile}
+        onClickItem={handleClickItem}
       />
     </>
   )

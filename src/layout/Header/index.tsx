@@ -14,9 +14,7 @@ import { observer } from 'mobx-react-lite'
 function Header() {
   const location = useLocation()
   const store = useGlobalStore()
-  const listShowMode = store.getState('listShowMode')
   const editorMode = store.getState('editorMode')
-  const workspacePath = store.getState('workspacePath')
   const [isInEditor, setIsInEditor] = useState(false)
   const [isShowAboutModal, setIsShowAboutModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -38,18 +36,6 @@ function Header() {
       store.updateFileList(dirPath as string)
     }
   }
-
-  const handleToggleListShowMode = () => {
-    if (listShowMode === 'flat') {
-      store.setState('listShowMode', 'tree')
-      if (!workspacePath) return
-      store.updateFileList(workspacePath)
-    } else {
-      store.setState('listShowMode', 'flat')
-    }
-  }
-
-  // TODO: Home 页面缓存之后跳转到详情页还会展示Home页面的元素
 
   return (
     <>
@@ -88,34 +74,14 @@ function Header() {
 
         <div>
           {!isInEditor && (
-            <>
-              <Tooltip
-                title={listShowMode === 'flat' ? '扁平列表' : '树状列表'}
-                placement='bottom'
-                arrowPointAtCenter
-              >
-                <Button
-                  icon={
-                    <Icon
-                      className={
-                        listShowMode === 'flat' ? 'icon-danlieliebiao' : 'icon-shuzhuang'
-                      }
-                    />
-                  }
-                  type='text'
-                  onClick={handleToggleListShowMode}
-                />
-              </Tooltip>
-              <Tooltip title='选择工作区' placement='bottomLeft' arrowPointAtCenter>
-                <Button
-                  icon={<Icon className='icon-dakaiwenjianjia' />}
-                  type='text'
-                  onClick={handleWorkSpace}
-                />
-              </Tooltip>
-            </>
+            <Tooltip title='选择工作区' placement='bottomLeft' arrowPointAtCenter>
+              <Button
+                icon={<Icon className='icon-dakaiwenjianjia' />}
+                type='text'
+                onClick={handleWorkSpace}
+              />
+            </Tooltip>
           )}
-
           {isInEditor && (
             <Tooltip
               title={`当前为${editorMode === 'view' ? '阅读' : '编辑'}模式`}
