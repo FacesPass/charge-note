@@ -29,8 +29,7 @@ const PathTracing: FC<IProps> = ({ className }) => {
       pos = strPositions[0]
     }
     const pathToJump = workspacePath.slice(0, pos + path.length)
-    const fileList = await fs.readDir(pathToJump)
-    store.setState('fileList', fileList)
+    await store.updateFileList(pathToJump)
     store.setState('workspacePath', pathToJump)
   }
 

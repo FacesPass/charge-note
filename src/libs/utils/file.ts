@@ -16,7 +16,6 @@ export function isEndsWithMd(name: string | undefined) {
 /** 深度递归遍历所有 markdown 文件 */
 export function filterMarkdownFile(fileList: fs.FileEntry[]) {
   if (!fileList.length) return []
-  console.log(fileList)
   return fileList
     .filter(
       (file) =>
