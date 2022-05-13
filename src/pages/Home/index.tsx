@@ -9,7 +9,6 @@ import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { appWindow } from '@tauri-apps/api/window'
 import { tracingHeightLayout } from '@/libs/dom'
-import TreeList from './components/TreeList'
 
 function Home() {
   const store = useGlobalStore()
@@ -44,7 +43,7 @@ function Home() {
     if (!name || !path) return
 
     appWindow.setTitle(name)
-    navigate('/editor', { state: { path, name } })
+    navigate('/editor', { state: { path, name, isNew: false } })
   }
 
   const handleRemoveFile = async (item: fs.FileEntry) => {
@@ -67,11 +66,7 @@ function Home() {
   return (
     <>
       <PathTracing className='path-tracing' />
-      <FlatList
-        className='file-list'
-        fileList={storeFileList}
-        onClickItem={handleClickItem}
-      />
+      <FlatList className='file-list' fileList={storeFileList} onClickItem={handleClickItem} />
     </>
   )
 }

@@ -49,7 +49,7 @@ const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
           </div>
         ))
       ) : (
-        <div className={styles.tip}>暂无 Markdown 文件</div>
+        <div className={styles.tip}>暂无内容</div>
       )}
     </div>
   )

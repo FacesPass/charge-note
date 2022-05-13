@@ -2,7 +2,8 @@ import { makeAutoObservable } from 'mobx'
 import { DEFAULT_STATE } from './state'
 import { set, get } from 'jsonuri'
 import IDEFAULT_STATE from './type'
-import { fs } from '@tauri-apps/api'
+import { filterMarkdownFile } from '@/libs/utils/file'
+import { readDir } from '@tauri-apps/api/fs'
 
 type TStateKeys = keyof IDEFAULT_STATE
 
@@ -22,8 +23,10 @@ class GlobalStore {
   }
 
   async updateFileList(dirPath: string) {
-    const fileList = await fs.readDir(dirPath)
-    this.state.fileList = fileList
+    const fileList = await readDir(dirPath, { recursive: true })
+    const markdownFileList = filterMarkdownFile(fileList)
+    console.log('markdownFileList', markdownFileList)
+    this.state.fileList = markdownFileList
   }
 }
 

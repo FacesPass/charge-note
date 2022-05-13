@@ -43,6 +43,7 @@
     "prettier": "prettier --write src/**/*.{ts,tsx,js,jsx,json}",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
+    "test:rust": "cd ./src-tauri && cargo test",
     "eject": "react-scripts eject",
     "tauri": "tauri",
     "prepare": "husky install"

@@ -39,10 +39,7 @@ function Header() {
 
   return (
     <>
-      <AboutModal
-        visible={isShowAboutModal}
-        onCancel={() => setIsShowAboutModal(false)}
-      />
+      <AboutModal visible={isShowAboutModal} onCancel={() => setIsShowAboutModal(false)} />
       <Search visible={isShowSearch} onCancel={() => setIsShowSearch(false)} />
 
       <div className={styles.container}>
@@ -73,27 +70,29 @@ function Header() {
         </div>
 
         <div>
-          {!isInEditor && (
-            <Tooltip title='选择工作区' placement='bottomLeft' arrowPointAtCenter>
-              <Button
-                icon={<Icon className='icon-dakaiwenjianjia' />}
-                type='text'
-                onClick={handleWorkSpace}
-              />
-            </Tooltip>
-          )}
-          {isInEditor && (
+          {!isInEditor ? (
+            <>
+              <Tooltip title='选择工作目录' placement='bottomLeft' arrowPointAtCenter>
+                <Button
+                  icon={<Icon className='icon-dakaiwenjianjia' />}
+                  type='text'
+                  onClick={handleWorkSpace}
+                />
+              </Tooltip>
+              <Tooltip title='新建' placement='bottomLeft' arrowPointAtCenter>
+                <Link to='/editor' state={{ isNew: true }}>
+                  <Button icon={<Icon className='icon-add1' />} type='text' />
+                </Link>
+              </Tooltip>
+            </>
+          ) : (
             <Tooltip
               title={`当前为${editorMode === 'view' ? '阅读' : '编辑'}模式`}
               placement='bottomLeft'
               arrowPointAtCenter
             >
               <Button
-                icon={
-                  <Icon
-                    className={editorMode === 'view' ? 'icon-chakan' : 'icon-meiridati'}
-                  />
-                }
+                icon={<Icon className={editorMode === 'view' ? 'icon-chakan' : 'icon-meiridati'} />}
                 type='text'
                 onClick={() => {
                   if (editorMode === 'view') {

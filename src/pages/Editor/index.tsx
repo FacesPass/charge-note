@@ -29,7 +29,12 @@ const Editor = () => {
   const store = useGlobalStore()
   const editorMode = store.getState('editorMode')
   const location = useLocation()
-  const filePath = (location.state as { path: string; name: string }).path
+  const { isNew, path: filePath } = location.state as {
+    isNew: boolean
+    path?: string
+    name?: string
+  }
+
   const contentRef = useRef({ content: '' })
   const [content, setContent] = useState('')
   const [isShowDialog, setIsShowDialog] = useState(false)
@@ -39,7 +44,7 @@ const Editor = () => {
   }, [])
 
   useEffect(() => {
-    handleToggleMode()
+    toggleMode()
 
     return () => {
       eventEmitter.off(MenuEvent.ToggleEditorMode)
@@ -47,33 +52,40 @@ const Editor = () => {
   }, [editorMode])
 
   useEffect(() => {
-    eventEmitter.on(MenuEvent.Back, handleBack)
+    eventEmitter.on(MenuEvent.Back, back)
 
     return () => {
       eventEmitter.off(MenuEvent.Back)
     }
   }, [])
 
-  const handleToggleMode = async () => {
+  const toggleMode = async () => {
     if (editorMode === 'view') {
-      if (!localStorage.disabledMaximizeDialog) {
-        const isMaximize = await appWindow.isMaximized()
-        if (!isMaximize) {
-          eventEmitter.on(MenuEvent.ToggleEditorMode, () => {
-            setIsShowDialog(true)
-          })
-        }
-      }
-
       markdownBodyLayout()
+      if (isShowDialog) {
+        setIsShowDialog(false)
+      }
+    }
+    if (localStorage.disabledMaximizeDialog) return
+
+    const isMaximize = await appWindow.isMaximized()
+    if (isMaximize) return
+
+    eventEmitter.on(MenuEvent.ToggleEditorMode, () => {
+      if (editorMode === 'view') {
+        setIsShowDialog(true)
+      }
+    })
+  }
+
+  const back = async () => {
+    if (!isNew && filePath) {
+      await writeFile({ path: filePath, contents: contentRef.current.content })
     }
   }
 
-  const handleBack = async () => {
-    await writeFile({ path: filePath, contents: contentRef.current.content })
-  }
-
   const readFile = async () => {
+    if (!filePath || isNew) return
     const content = await fs.readTextFile(filePath)
     contentRef.current.content = content
     setContent(content)
@@ -113,7 +125,7 @@ const Editor = () => {
                 appWindow.maximize()
                 setTimeout(() => {
                   setIsShowDialog(false)
-                }, 100)
+                }, 300)
               }}
             >
               确定
@@ -129,9 +141,6 @@ const Editor = () => {
         <MDEditor
           locale={zh}
           value={content}
-          editorConfig={{
-            tabSize: 2,
-          }}
           plugins={plugins}
           onChange={(v) => {
             setContent(v)
