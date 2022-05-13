@@ -79,6 +79,7 @@ const Editor = () => {
   }
 
   const back = async () => {
+    // 编辑模式返回时直接保存
     if (!isNew && filePath) {
       await writeFile({ path: filePath, contents: contentRef.current.content })
     }

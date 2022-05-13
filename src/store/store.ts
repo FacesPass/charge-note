@@ -23,9 +23,8 @@ class GlobalStore {
   }
 
   async updateFileList(dirPath: string) {
-    const fileList = await readDir(dirPath, { recursive: true })
+    const fileList = await readDir(dirPath)
     const markdownFileList = filterMarkdownFile(fileList)
-    console.log('markdownFileList', markdownFileList)
     this.state.fileList = markdownFileList
   }
 }

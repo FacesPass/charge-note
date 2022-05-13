@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { fs } from '@tauri-apps/api'
 import FlatList from './components/FlatList'
 import { observer } from 'mobx-react-lite'
@@ -9,13 +9,14 @@ import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { appWindow } from '@tauri-apps/api/window'
 import { tracingHeightLayout } from '@/libs/dom'
+import './index.less'
 
 function Home() {
   const store = useGlobalStore()
   const navigate = useNavigate()
   const storeFileList = store.getState('fileList')
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setTimeout(() => {
       tracingHeightLayout()
     }, 0)
@@ -35,8 +36,7 @@ function Home() {
 
     // 文件夹
     store.setState('workspacePath', path)
-    const fileList = await fs.readDir(path)
-    store.setState('fileList', fileList)
+    await store.updateFileList(path)
   }
 
   const handleOpenFile = ({ name, path }: fs.FileEntry) => {

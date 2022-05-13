@@ -47,26 +47,38 @@ function Header() {
           {isInEditor && (
             <>
               <Link to='/' onClick={() => eventEmitter.emit(MenuEvent.Back)}>
-                <Button type='text'>返回</Button>
+                <Tooltip title='返回'>
+                  <Button type='text' icon={<Icon className='icon-fanhui' />} />
+                </Tooltip>
               </Link>
-              <Button
-                type='text'
-                onClick={async () => {
-                  const isMaximized = await appWindow.isMaximized()
-                  if (isMaximized) return
-                  appWindow.center()
-                }}
-              >
-                居中
-              </Button>
+
+              <Tooltip title='居中'>
+                <Button
+                  icon={<Icon className='icon-pingmujuzhong_screenCenter_01' />}
+                  type='text'
+                  onClick={async () => {
+                    const isMaximized = await appWindow.isMaximized()
+                    if (isMaximized) return
+                    appWindow.center()
+                  }}
+                />
+              </Tooltip>
             </>
           )}
-          <Button type='text' onClick={() => setIsShowAboutModal(true)}>
-            关于
-          </Button>
-          <Button type='text' onClick={() => appWindow.hide()}>
-            隐藏
-          </Button>
+          <Tooltip title='关于' arrowPointAtCenter>
+            <Button
+              type='text'
+              onClick={() => setIsShowAboutModal(true)}
+              icon={<Icon className='icon-guanyu1' />}
+            />
+          </Tooltip>
+          <Tooltip title='隐藏到系统托盘' placement='bottomRight' arrowPointAtCenter>
+            <Button
+              icon={<Icon className='icon-a-trayandarrowdownfill' />}
+              type='text'
+              onClick={() => appWindow.hide()}
+            />
+          </Tooltip>
         </div>
 
         <div>
@@ -79,7 +91,7 @@ function Header() {
                   onClick={handleWorkSpace}
                 />
               </Tooltip>
-              <Tooltip title='新建' placement='bottomLeft' arrowPointAtCenter>
+              <Tooltip title='新建' placement='bottom' arrowPointAtCenter>
                 <Link to='/editor' state={{ isNew: true }}>
                   <Button icon={<Icon className='icon-add1' />} type='text' />
                 </Link>
