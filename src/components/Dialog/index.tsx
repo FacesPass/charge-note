@@ -1,14 +1,34 @@
-import { ExclamationCircleOutlined, InfoCircleOutlined } from '@ant-design/icons'
+import { InfoCircleOutlined } from '@ant-design/icons'
 import { Modal } from 'antd'
-import React, { memo } from 'react'
+import React, { FC, memo } from 'react'
 import styles from './index.module.less'
 
-function Dialog() {
+interface IProps {
+  visible?: boolean
+  width?: number
+  children?: React.ReactNode
+  footer?: React.ReactNode
+  onCancel?: () => void
+}
+
+const Dialog: FC<IProps> = ({
+  visible,
+  width = 350,
+  footer = null,
+  children = '请输入内容',
+  onCancel,
+}) => {
   return (
-    <Modal visible={false} width={350} closable={false}>
+    <Modal
+      footer={footer}
+      visible={visible}
+      width={width}
+      closable={false}
+      onCancel={onCancel}
+    >
       <div className={styles.container}>
         <InfoCircleOutlined style={{ fontSize: '20px', color: '#1890FF' }} />
-        <div className={styles.content}>哈哈哈哈哈</div>
+        <div className={styles.content}>{children}</div>
       </div>
     </Modal>
   )

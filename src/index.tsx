@@ -9,8 +9,6 @@ import moment from 'moment'
 import 'moment/locale/zh-cn'
 import App from './App'
 import 'antd/dist/antd.less'
-import './libs/fonts/iconfont'
-import './libs/fonts/iconfont.css'
 import './styles/index.less'
 
 moment.locale('zh-cn')

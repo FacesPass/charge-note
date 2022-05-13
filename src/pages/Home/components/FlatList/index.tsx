@@ -8,10 +8,9 @@ import styles from './index.module.less'
 interface IProps {
   className?: string
   onClickItem?: (item: fs.FileEntry) => void
-  onRemoveFile?: (item: fs.FileEntry) => void
   fileList: fs.FileEntry[]
 }
-const FileList: FC<IProps> = ({ fileList, className, onClickItem, onRemoveFile }) => {
+const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
   const handleSequense = (fileList: fs.FileEntry[]) => [
     ...fileList.filter((item) => isEndsWithMd(item.name)),
     ...fileList.filter((item) => item.children),
@@ -25,15 +24,25 @@ const FileList: FC<IProps> = ({ fileList, className, onClickItem, onRemoveFile }
             className={styles.listItem}
             key={item.path}
             onClick={() => onClickItem?.(item)}
+            onContextMenu={(e) => {
+              console.log(123)
+              e.preventDefault()
+            }}
           >
             <Tooltip title={item.name} mouseEnterDelay={1}>
               <div className={styles.name}>
                 {isEndsWithMd(item.name) ? (
-                  <Icon className='icon-file-markdown'>{item.name}</Icon>
+                  <Icon size={18} className='icon-file-markdown'>
+                    {item.name}
+                  </Icon>
                 ) : item?.children ? (
-                  <Icon className='icon-wenjianjia'>{item.name}</Icon>
+                  <Icon size={18} className='icon-dakaiwenjianjia'>
+                    {item.name}
+                  </Icon>
                 ) : (
-                  <Icon className='icon-wenjian'>{item.name}</Icon>
+                  <Icon size={18} className='icon-wenjian'>
+                    {item.name}
+                  </Icon>
                 )}
               </div>
             </Tooltip>
@@ -46,4 +55,4 @@ const FileList: FC<IProps> = ({ fileList, className, onClickItem, onRemoveFile }
   )
 }
 
-export default memo(FileList)
+export default memo(FlatList)

@@ -17,12 +17,12 @@ class GlobalStore {
     return get(this.state, path)
   }
 
-  setState(key: TStateKeys, val: unknown) {
+  setState<T extends TStateKeys>(key: T, val: IDEFAULT_STATE[T]) {
     set(this.state, key, val)
   }
 
   async updateFileList(dirPath: string) {
-    const fileList = await fs.readDir(dirPath)
+    const fileList = await fs.readDir(dirPath, { recursive: true })
     this.state.fileList = fileList
   }
 }

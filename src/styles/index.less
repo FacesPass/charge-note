@@ -1,4 +1,6 @@
-@headerHeight: 30px;
+@menuHeight: 30px;
+@toolbarHeight: 32px;
+@headerHeight: @menuHeight + @toolbarHeight;
 
 body {
   height: auto;
@@ -34,12 +36,12 @@ body {
 
 :root {
   .iconfont {
-    margin-right: 10px;
+    margin-right: 5px;
   }
 }
 
 .ant-message {
-  top: @headerHeight;
+  top: @menuHeight;
   z-index: 9999;
 }
 

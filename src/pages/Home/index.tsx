@@ -1,6 +1,6 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { fs } from '@tauri-apps/api'
-import FileList from './components/FileList'
+import FlatList from './components/FlatList'
 import { observer } from 'mobx-react-lite'
 import { useGlobalStore } from '@/store'
 import PathTracing from './components/PathTracing'
@@ -8,24 +8,22 @@ import { isEndsWithMd } from '@/libs/utils/file'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { appWindow } from '@tauri-apps/api/window'
+import { tracingHeightLayout } from '@/libs/dom'
+import TreeList from './components/TreeList'
 
 function Home() {
   const store = useGlobalStore()
   const navigate = useNavigate()
   const storeFileList = store.getState('fileList')
+  const listShowMode = store.getState('listShowMode')
 
   useEffect(() => {
-    setTimeout(() => {
-      handleAutoTracingHeight()
-    }, 0)
-  }, [storeFileList])
-
-  const handleAutoTracingHeight = () => {
-    const tracingHeight = (document.querySelector('.path-tracing') as HTMLElement)
-      .offsetHeight
-    ;(document.querySelector('.file-list') as HTMLElement).style.marginTop =
-      tracingHeight + 'px'
-  }
+    if (listShowMode === 'flat') {
+      setTimeout(() => {
+        tracingHeightLayout()
+      }, 0)
+    }
+  }, [storeFileList, listShowMode])
 
   const handleClickItem = async ({ children, path, name }: fs.FileEntry) => {
     if (!children) {
@@ -35,9 +33,7 @@ function Home() {
         return
       }
 
-      if (!name) return
-      appWindow.setTitle(name)
-      navigate('/editor', { state: { path, name } })
+      handleOpenFile({ name, path })
       return
     }
 
@@ -45,6 +41,13 @@ function Home() {
     store.setState('workspacePath', path)
     const fileList = await fs.readDir(path)
     store.setState('fileList', fileList)
+  }
+
+  const handleOpenFile = ({ name, path }: fs.FileEntry) => {
+    if (!name || !path) return
+
+    appWindow.setTitle(name)
+    navigate('/editor', { state: { path, name } })
   }
 
   const handleRemoveFile = async (item: fs.FileEntry) => {
@@ -60,19 +63,24 @@ function Home() {
       store.updateFileList(workspacePath)
       message.success('删除成功')
     } catch (e) {
-      console.log(e)
       message.error('删除失败')
     }
   }
 
   return (
     <>
-      <PathTracing className='path-tracing' />
-      <FileList
-        className='file-list'
+      <div style={{ display: listShowMode === 'flat' ? 'block' : 'none' }}>
+        <PathTracing className='path-tracing' />
+        <FlatList
+          className='file-list'
+          fileList={storeFileList}
+          onClickItem={handleClickItem}
+        />
+      </div>
+      <TreeList
+        style={{ display: listShowMode === 'tree' ? 'block' : 'none' }}
         fileList={storeFileList}
-        onClickItem={handleClickItem}
-        onRemoveFile={handleRemoveFile}
+        onClickFile={handleOpenFile}
       />
     </>
   )

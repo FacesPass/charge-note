@@ -1,6 +1,7 @@
 import IDEFAULT_STATE from './type'
 
 export const DEFAULT_STATE: IDEFAULT_STATE = {
+  listShowMode: 'tree',
   editorMode: 'view',
   /* 面包屑导航栏路径列表 */
   fileList: [],

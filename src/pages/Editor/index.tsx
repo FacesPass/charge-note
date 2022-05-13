@@ -22,6 +22,8 @@ import { writeFile } from '@tauri-apps/api/fs'
 import { observer } from 'mobx-react-lite'
 import { appWindow } from '@tauri-apps/api/window'
 import Dialog from '@/components/Dialog'
+import { markdownBodyLayout } from '@/libs/dom'
+import { Button } from 'antd'
 
 const Editor = () => {
   const store = useGlobalStore()
@@ -30,6 +32,7 @@ const Editor = () => {
   const filePath = (location.state as { path: string; name: string }).path
   const contentRef = useRef({ content: '' })
   const [content, setContent] = useState('')
+  const [isShowDialog, setIsShowDialog] = useState(false)
 
   useEffect(() => {
     readFile()
@@ -52,18 +55,17 @@ const Editor = () => {
   }, [])
 
   const handleToggleMode = async () => {
-    const isMaximize = await appWindow.isMaximized()
     if (editorMode === 'view') {
-      if (!isMaximize) {
-        eventEmitter.on(MenuEvent.ToggleEditorMode, () => {
-          console.log(123)
-        })
+      if (!localStorage.disabledMaximizeDialog) {
+        const isMaximize = await appWindow.isMaximized()
+        if (!isMaximize) {
+          eventEmitter.on(MenuEvent.ToggleEditorMode, () => {
+            setIsShowDialog(true)
+          })
+        }
       }
 
-      const markdownBody = document.querySelector('.markdown-body') as HTMLElement
-      markdownBody.style.overflowY = 'auto'
-      markdownBody.style.height = 'calc(100vh - 30px)'
-      markdownBody.style.padding = '0 20px 20px'
+      markdownBodyLayout()
     }
   }
 
@@ -92,7 +94,37 @@ const Editor = () => {
 
   return (
     <>
-      <Dialog />
+      <Dialog
+        width={400}
+        footer={
+          <>
+            <Button
+              onClick={() => {
+                localStorage.disabledMaximizeDialog = true
+                setIsShowDialog(false)
+              }}
+            >
+              不再提醒
+            </Button>
+            <Button onClick={() => setIsShowDialog(false)}>取消</Button>
+            <Button
+              type='primary'
+              onClick={async () => {
+                appWindow.maximize()
+                setTimeout(() => {
+                  setIsShowDialog(false)
+                }, 100)
+              }}
+            >
+              确定
+            </Button>
+          </>
+        }
+        visible={isShowDialog}
+        onCancel={() => setIsShowDialog(false)}
+      >
+        是否切换到全屏模式以获得更好的编辑体验?
+      </Dialog>
       {store.getState('editorMode') === 'edit' ? (
         <MDEditor
           locale={zh}

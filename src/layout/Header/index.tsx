@@ -5,7 +5,7 @@ import AboutModal from './components/AboutModal'
 import Search from './components/Search'
 import { useLocation, Link } from 'react-router-dom'
 import styles from './index.module.less'
-import { dialog, fs } from '@tauri-apps/api'
+import { dialog } from '@tauri-apps/api'
 import { useGlobalStore } from '@/store'
 import Icon from '@/components/Icon'
 import eventEmitter, { MenuEvent } from '@/libs/events'
@@ -14,7 +14,9 @@ import { observer } from 'mobx-react-lite'
 function Header() {
   const location = useLocation()
   const store = useGlobalStore()
+  const listShowMode = store.getState('listShowMode')
   const editorMode = store.getState('editorMode')
+  const workspacePath = store.getState('workspacePath')
   const [isInEditor, setIsInEditor] = useState(false)
   const [isShowAboutModal, setIsShowAboutModal] = useState(false)
   const [isShowSearch, setIsShowSearch] = useState(false)
@@ -26,9 +28,9 @@ function Header() {
   }, [location])
 
   const handleWorkSpace = async () => {
-    const dirPath = await dialog.open({
+    const dirPath = (await dialog.open({
       directory: true,
-    })
+    })) as string
 
     if (dirPath) {
       store.setState('workspacePath', dirPath)
@@ -36,6 +38,18 @@ function Header() {
       store.updateFileList(dirPath as string)
     }
   }
+
+  const handleToggleListShowMode = () => {
+    if (listShowMode === 'flat') {
+      store.setState('listShowMode', 'tree')
+      if (!workspacePath) return
+      store.updateFileList(workspacePath)
+    } else {
+      store.setState('listShowMode', 'flat')
+    }
+  }
+
+  // TODO: Home 页面缓存之后跳转到详情页还会展示Home页面的元素
 
   return (
     <>
@@ -73,13 +87,34 @@ function Header() {
         </div>
 
         <div>
-          <Tooltip title='选择工作区' placement='bottomLeft' arrowPointAtCenter>
-            <Button
-              icon={<Icon size={18} className='icon-wenjianjia' />}
-              type='text'
-              onClick={handleWorkSpace}
-            />
-          </Tooltip>
+          {!isInEditor && (
+            <>
+              <Tooltip
+                title={listShowMode === 'flat' ? '扁平列表' : '树状列表'}
+                placement='bottom'
+                arrowPointAtCenter
+              >
+                <Button
+                  icon={
+                    <Icon
+                      className={
+                        listShowMode === 'flat' ? 'icon-danlieliebiao' : 'icon-shuzhuang'
+                      }
+                    />
+                  }
+                  type='text'
+                  onClick={handleToggleListShowMode}
+                />
+              </Tooltip>
+              <Tooltip title='选择工作区' placement='bottomLeft' arrowPointAtCenter>
+                <Button
+                  icon={<Icon className='icon-dakaiwenjianjia' />}
+                  type='text'
+                  onClick={handleWorkSpace}
+                />
+              </Tooltip>
+            </>
+          )}
 
           {isInEditor && (
             <Tooltip
@@ -90,7 +125,6 @@ function Header() {
               <Button
                 icon={
                   <Icon
-                    size={18}
                     className={editorMode === 'view' ? 'icon-chakan' : 'icon-meiridati'}
                   />
                 }
