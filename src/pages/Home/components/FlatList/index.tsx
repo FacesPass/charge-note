@@ -31,21 +31,13 @@ const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
             <Tooltip title={item.name} mouseEnterDelay={1}>
               <div className={styles.name}>
                 {isEndsWithMd(item.name) ? (
-                  <Icon style={{ marginRight: '10px' }} type='icon-file-markdown'>
-                    {item.name}
-                  </Icon>
+                  <FileIcon type='icon-file-markdown' name={item.name} />
                 ) : isEndsWithTxt(item.name) ? (
-                  <Icon style={{ marginRight: '10px' }} type='icon-wenbenwenjian_file-text'>
-                    {item.name}
-                  </Icon>
+                  <FileIcon type='icon-wenbenwenjian_file-text' name={item.name} />
                 ) : item?.children ? (
-                  <Icon style={{ marginRight: '10px' }} type='icon-dakaiwenjianjia'>
-                    {item.name}
-                  </Icon>
+                  <FileIcon type='icon-dakaiwenjianjia' name={item.name} />
                 ) : (
-                  <Icon style={{ marginRight: '10px' }} type='icon-wenjian'>
-                    {item.name}
-                  </Icon>
+                  <FileIcon type='icon-wenjian' name={item.name} />
                 )}
               </div>
             </Tooltip>
@@ -59,3 +51,11 @@ const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
 }
 
 export default memo(FlatList)
+
+const FileIcon: FC<{ type: string; name?: string }> = ({ type, name }) => {
+  return (
+    <Icon style={{ marginRight: '10px' }} type={type}>
+      {name || '未知文件'}
+    </Icon>
+  )
+}
