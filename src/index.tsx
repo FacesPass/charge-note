@@ -10,6 +10,7 @@ import 'moment/locale/zh-cn'
 import App from './App'
 import 'antd/dist/antd.less'
 import './styles/index.less'
+import './styles/media.less'
 
 moment.locale('zh-cn')
 

@@ -11,7 +11,7 @@ function App() {
     <>
       <Menu />
       <Modal />
-      {routes}
+      <div className='content-body'>{routes}</div>
     </>
   )
 }

@@ -1,6 +1,6 @@
 import React, { FC, memo } from 'react'
 import Icon from '@/components/Icon'
-import { isEndsWithMd } from '@/libs/utils/file'
+import { isEndsWithMd, isEndsWithTxt, isLegalFile } from '@/libs/utils/file'
 import { fs } from '@tauri-apps/api'
 import { Tooltip } from 'antd'
 import styles from './index.module.less'
@@ -12,7 +12,7 @@ interface IProps {
 }
 const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
   const handleSequense = (fileList: fs.FileEntry[]) => [
-    ...fileList.filter((item) => isEndsWithMd(item.name)),
+    ...fileList.filter((item) => isLegalFile(item.name)),
     ...fileList.filter((item) => item.children),
   ]
 
@@ -32,6 +32,10 @@ const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
               <div className={styles.name}>
                 {isEndsWithMd(item.name) ? (
                   <Icon size={18} className='icon-file-markdown'>
+                    {item.name}
+                  </Icon>
+                ) : isEndsWithTxt(item.name) ? (
+                  <Icon size={18} className='icon-wenbenwenjian_file-text'>
                     {item.name}
                   </Icon>
                 ) : item?.children ? (

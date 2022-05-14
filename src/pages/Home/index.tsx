@@ -4,7 +4,6 @@ import FlatList from './components/FlatList'
 import { observer } from 'mobx-react-lite'
 import { useGlobalStore } from '@/store'
 import PathTracing from './components/PathTracing'
-import { isEndsWithMd } from '@/libs/utils/file'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { appWindow } from '@tauri-apps/api/window'
@@ -25,11 +24,6 @@ function Home() {
   const handleClickItem = async ({ children, path, name }: fs.FileEntry) => {
     if (!children) {
       // 文件
-      if (!isEndsWithMd(name)) {
-        message.warn('不支持该格式文件')
-        return
-      }
-
       handleOpenFile({ name, path })
       return
     }
