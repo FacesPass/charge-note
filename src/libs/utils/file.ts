@@ -3,7 +3,7 @@ import { fs } from '@tauri-apps/api'
 export function isEndsWith(name: string | undefined, ext: string | string[]) {
   if (!name) return
   if (Array.isArray(ext)) {
-    return ext.some((_ext) => name.includes(_ext))
+    return ext.some((_ext) => name.endsWith(`.${_ext}`))
   }
   return name.endsWith(`.${ext}`)
 }
