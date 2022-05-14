@@ -31,19 +31,19 @@ const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
             <Tooltip title={item.name} mouseEnterDelay={1}>
               <div className={styles.name}>
                 {isEndsWithMd(item.name) ? (
-                  <Icon size={18} className='icon-file-markdown'>
+                  <Icon style={{ marginRight: '10px' }} type='icon-file-markdown'>
                     {item.name}
                   </Icon>
                 ) : isEndsWithTxt(item.name) ? (
-                  <Icon size={18} className='icon-wenbenwenjian_file-text'>
+                  <Icon style={{ marginRight: '10px' }} type='icon-wenbenwenjian_file-text'>
                     {item.name}
                   </Icon>
                 ) : item?.children ? (
-                  <Icon size={18} className='icon-dakaiwenjianjia'>
+                  <Icon style={{ marginRight: '10px' }} type='icon-dakaiwenjianjia'>
                     {item.name}
                   </Icon>
                 ) : (
-                  <Icon size={18} className='icon-wenjian'>
+                  <Icon style={{ marginRight: '10px' }} type='icon-wenjian'>
                     {item.name}
                   </Icon>
                 )}

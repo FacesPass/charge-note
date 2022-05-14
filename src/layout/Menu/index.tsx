@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Tooltip } from 'antd'
 import { appWindow } from '@tauri-apps/api/window'
 import { useLocation, Link } from 'react-router-dom'
-import styles from './index.module.less'
 import { dialog } from '@tauri-apps/api'
 import { useGlobalStore } from '@/store'
-import Icon from '@/components/Icon'
 import eventEmitter, { MenuEvent } from '@/libs/events'
 import { observer } from 'mobx-react-lite'
+import styles from './index.module.less'
+import MenuItem from './components/MenuItem'
 
 function Menu() {
   const location = useLocation()
@@ -40,75 +39,67 @@ function Menu() {
           {isInEditor && (
             <>
               <Link to='/' onClick={() => eventEmitter.emit(MenuEvent.Back)}>
-                <Tooltip title='返回'>
-                  <Button type='text' icon={<Icon className='icon-fanhui' />} />
-                </Tooltip>
-              </Link>
-
-              <Tooltip title='居中'>
-                <Button
-                  icon={<Icon className='icon-pingmujuzhong_screenCenter_01' />}
-                  type='text'
-                  onClick={async () => {
-                    const isMaximized = await appWindow.isMaximized()
-                    if (isMaximized) return
-                    appWindow.center()
-                  }}
+                <MenuItem
+                  style={{ marginRight: '5px' }}
+                  toolTipTitle='返回'
+                  fontClass='icon-fanhui'
                 />
-              </Tooltip>
+              </Link>
+              <MenuItem
+                style={{ marginRight: '5px' }}
+                onClick={async () => {
+                  const isMaximized = await appWindow.isMaximized()
+                  if (isMaximized) return
+                  appWindow.center()
+                }}
+                toolTipTitle='居中'
+                fontClass='icon-pingmujuzhong_screenCenter_01'
+              />
             </>
           )}
-          <Tooltip title='关于' arrowPointAtCenter>
-            <Button
-              type='text'
-              onClick={() => store.setModalState('isShowAboutModal', true)}
-              icon={<Icon className='icon-guanyu1' />}
-            />
-          </Tooltip>
-          <Tooltip title='隐藏到系统托盘' placement='bottomRight' arrowPointAtCenter>
-            <Button
-              icon={<Icon className='icon-a-trayandarrowdownfill' />}
-              type='text'
-              onClick={() => appWindow.hide()}
-            />
-          </Tooltip>
+          <MenuItem
+            style={{ marginRight: '5px' }}
+            toolTipTitle='关于'
+            fontClass='icon-guanyu'
+            onClick={() => store.setModalState('isShowAboutModal', true)}
+          />
+          <MenuItem
+            fontClass='icon-a-trayandarrowdownfill'
+            toolTipTitle='隐藏到系统托盘'
+            toolTipPlacement='bottomRight'
+            onClick={() => appWindow.hide()}
+          />
         </div>
 
         <div>
           {!isInEditor ? (
             <>
-              <Tooltip title='选择工作目录' placement='bottomLeft' arrowPointAtCenter>
-                <Button
-                  icon={<Icon className='icon-dakaiwenjianjia' />}
-                  type='text'
-                  onClick={handleWorkSpace}
-                />
-              </Tooltip>
-              <Tooltip title='新建' placement='bottom' arrowPointAtCenter>
-                <Link to='/editor' state={{ isNew: true }}>
-                  <Button icon={<Icon className='icon-add1' />} type='text' />
-                </Link>
-              </Tooltip>
+              <MenuItem
+                style={{ marginRight: '5px' }}
+                toolTipTitle='选择工作目录'
+                toolTipPlacement='bottomLeft'
+                fontClass='icon-dakaiwenjianjia'
+                onClick={handleWorkSpace}
+              />
+
+              <Link to='/editor' state={{ isNew: true }}>
+                <MenuItem toolTipTitle='新建' fontClass='icon-add' />
+              </Link>
             </>
           ) : (
-            <Tooltip
-              title={`当前为${editorMode === 'view' ? '阅读' : '编辑'}模式`}
-              placement='bottomLeft'
-              arrowPointAtCenter
-            >
-              <Button
-                icon={<Icon className={editorMode === 'view' ? 'icon-chakan' : 'icon-meiridati'} />}
-                type='text'
-                onClick={() => {
-                  if (editorMode === 'view') {
-                    store.setState('editorMode', 'edit')
-                  } else {
-                    store.setState('editorMode', 'view')
-                  }
-                  eventEmitter.emit(MenuEvent.ToggleEditorMode)
-                }}
-              />
-            </Tooltip>
+            <MenuItem
+              onClick={() => {
+                if (editorMode === 'view') {
+                  store.setState('editorMode', 'edit')
+                } else {
+                  store.setState('editorMode', 'view')
+                }
+                eventEmitter.emit(MenuEvent.ToggleEditorMode)
+              }}
+              fontClass={editorMode === 'view' ? 'icon-chakan' : 'icon-meiridati'}
+              toolTipPlacement='bottomLeft'
+              toolTipTitle={`当前为${editorMode === 'view' ? '阅读' : '编辑'}模式`}
+            />
           )}
         </div>
       </div>

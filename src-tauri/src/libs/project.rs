@@ -1,4 +1,3 @@
-use std::process;
 use tauri::{
     AppHandle, CustomMenuItem, Manager, Menu, SystemTray, SystemTrayEvent, SystemTrayMenu,
     SystemTrayMenuItem, Window, WindowMenuEvent,
@@ -19,8 +18,8 @@ pub fn handle_menu_event() -> impl Fn(WindowMenuEvent) + Send + Sync + 'static {
 
 /// 创建系统托盘菜单
 pub fn create_system_tray_menu() -> SystemTray {
-    let show = CustomMenuItem::new("show".to_string(), "显示");
-    let quit = CustomMenuItem::new("quit".to_string(), "退出");
+    let show = CustomMenuItem::new("show", "显示");
+    let quit = CustomMenuItem::new("quit", "退出");
     let tray_menu = SystemTrayMenu::new()
         .add_item(show)
         .add_item(quit)

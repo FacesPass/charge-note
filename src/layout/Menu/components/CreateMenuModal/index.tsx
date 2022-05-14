@@ -11,10 +11,10 @@ const CreateMenuModal: FC<IProps> = ({ visible, onCancel }) => {
   return (
     <Modal width={300} visible={visible} footer={null} title='笔记创建' onCancel={onCancel}>
       <div className={styles.menu}>
-        <Button icon={<Icon className='icon-wj-bjb' />} size='middle'>
+        <Button icon={<Icon type='icon-wj-bjb' />} size='middle'>
           普通笔记
         </Button>
-        <Button icon={<Icon className='icon-file-markdown' />} size='middle'>
+        <Button icon={<Icon type='icon-file-markdown' />} size='middle'>
           Markdown笔记
         </Button>
       </div>
