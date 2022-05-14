@@ -25,7 +25,6 @@ const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
             key={item.path}
             onClick={() => onClickItem?.(item)}
             onContextMenu={(e) => {
-              console.log(123)
               e.preventDefault()
             }}
           >

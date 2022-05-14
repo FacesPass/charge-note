@@ -1,14 +1,16 @@
 import React from 'react'
 import { routeConfig } from '@/routes'
 import { useRoutes } from 'react-router-dom'
-import Header from './layout/Header'
+import Menu from './layout/Menu'
+import Modal from './layout/Modal'
 
 function App() {
   const routes = useRoutes(routeConfig)
 
   return (
     <>
-      <Header />
+      <Menu />
+      <Modal />
       {routes}
     </>
   )

@@ -10,10 +10,25 @@
       }
     }
   }
-  @media screen and (max-width: 800px) {
+}
+
+@media screen and (max-width: 800px) {
+  .bytemd {
     height: calc(100vh - @menuHeight + 32px);
     .bytemd-toolbar {
       display: none;
     }
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .markdown-body {
+    padding: 0 100px !important;
+  }
+}
+
+@media screen and (min-width: 800px) {
+  .markdown-body {
+    padding: 0 200px !important;
   }
 }

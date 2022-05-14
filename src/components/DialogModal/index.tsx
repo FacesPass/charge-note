@@ -11,7 +11,7 @@ interface IProps {
   onCancel?: () => void
 }
 
-const Dialog: FC<IProps> = ({
+const DialogModal: FC<IProps> = ({
   visible,
   width = 350,
   footer = null,
@@ -19,13 +19,7 @@ const Dialog: FC<IProps> = ({
   onCancel,
 }) => {
   return (
-    <Modal
-      footer={footer}
-      visible={visible}
-      width={width}
-      closable={false}
-      onCancel={onCancel}
-    >
+    <Modal footer={footer} visible={visible} width={width} closable={false} onCancel={onCancel}>
       <div className={styles.container}>
         <InfoCircleOutlined style={{ fontSize: '20px', color: '#1890FF' }} />
         <div className={styles.content}>{children}</div>
@@ -34,4 +28,4 @@ const Dialog: FC<IProps> = ({
   )
 }
 
-export default memo(Dialog)
+export default memo(DialogModal)

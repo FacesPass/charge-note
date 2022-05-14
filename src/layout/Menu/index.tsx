@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Tooltip } from 'antd'
 import { appWindow } from '@tauri-apps/api/window'
-import AboutModal from './components/AboutModal'
-import Search from './components/Search'
 import { useLocation, Link } from 'react-router-dom'
 import styles from './index.module.less'
 import { dialog } from '@tauri-apps/api'
@@ -11,13 +9,11 @@ import Icon from '@/components/Icon'
 import eventEmitter, { MenuEvent } from '@/libs/events'
 import { observer } from 'mobx-react-lite'
 
-function Header() {
+function Menu() {
   const location = useLocation()
   const store = useGlobalStore()
   const editorMode = store.getState('editorMode')
   const [isInEditor, setIsInEditor] = useState(false)
-  const [isShowAboutModal, setIsShowAboutModal] = useState(false)
-  const [isShowSearch, setIsShowSearch] = useState(false)
 
   useEffect(() => {
     const isInEditor = location.pathname === '/editor'
@@ -39,9 +35,6 @@ function Header() {
 
   return (
     <>
-      <AboutModal visible={isShowAboutModal} onCancel={() => setIsShowAboutModal(false)} />
-      <Search visible={isShowSearch} onCancel={() => setIsShowSearch(false)} />
-
       <div className={styles.container}>
         <div>
           {isInEditor && (
@@ -68,7 +61,7 @@ function Header() {
           <Tooltip title='关于' arrowPointAtCenter>
             <Button
               type='text'
-              onClick={() => setIsShowAboutModal(true)}
+              onClick={() => store.setModalState('isShowAboutModal', true)}
               icon={<Icon className='icon-guanyu1' />}
             />
           </Tooltip>
@@ -124,4 +117,4 @@ function Header() {
   )
 }
 
-export default observer(Header)
+export default observer(Menu)

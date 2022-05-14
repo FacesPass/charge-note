@@ -9,13 +9,7 @@ interface IProps {
 }
 const CreateMenuModal: FC<IProps> = ({ visible, onCancel }) => {
   return (
-    <Modal
-      width={300}
-      visible={visible}
-      footer={null}
-      title='笔记创建'
-      onCancel={onCancel}
-    >
+    <Modal width={300} visible={visible} footer={null} title='笔记创建' onCancel={onCancel}>
       <div className={styles.menu}>
         <Button icon={<Icon className='icon-wj-bjb' />} size='middle'>
           普通笔记
