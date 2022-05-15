@@ -1,6 +1,6 @@
-import IDEFAULT_STATE from './type'
+import { IDefaultState, IModalState } from './type'
 
-export const DEFAULT_STATE: IDEFAULT_STATE = {
+export const DEFAULT_STATE: IDefaultState = {
   appName: '',
   appVersion: '',
   editorMode: 'view',
@@ -12,7 +12,7 @@ export const DEFAULT_STATE: IDEFAULT_STATE = {
   workspacePath: undefined,
 }
 
-export const MODAL_STATE = {
+export const MODAL_STATE: IModalState = {
   /* 显示关于的弹窗 */
   isShowAboutModal: false,
   /* 显示最大化窗口的弹窗 */

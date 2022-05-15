@@ -93,6 +93,7 @@ const Editor = () => {
     if (!workspacePath) return
     // 刷新列表获取最新编辑时间
     store.updateFileList(workspacePath)
+    store.closeAllModals()
   }
 
   const readFile = async () => {
