@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { fs } from '@tauri-apps/api'
 import FlatList from './components/FlatList'
 import { observer } from 'mobx-react-lite'
@@ -6,7 +6,6 @@ import { useGlobalStore } from '@/store'
 import PathTracing from './components/PathTracing'
 import { message } from 'antd'
 import { useNavigate } from 'react-router-dom'
-import { appWindow } from '@tauri-apps/api/window'
 import { tracingHeightLayout } from '@/libs/dom'
 import './index.less'
 
@@ -15,7 +14,7 @@ function Home() {
   const navigate = useNavigate()
   const storeFileList = store.getState('fileList')
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setTimeout(() => {
       tracingHeightLayout()
     }, 0)
@@ -36,7 +35,6 @@ function Home() {
   const handleOpenFile = ({ name, path }: fs.FileEntry) => {
     if (!name || !path) return
 
-    appWindow.setTitle(name)
     navigate('/editor', { state: { path, name, isNew: false } })
   }
 

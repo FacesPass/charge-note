@@ -27,7 +27,11 @@ const Editor = () => {
   const store = useGlobalStore()
   const editorMode = store.getState('editorMode')
   const location = useLocation()
-  const { isNew, path: filePath } = location.state as {
+  const {
+    isNew,
+    path: filePath,
+    name,
+  } = location.state as {
     isNew: boolean
     path?: string
     name?: string
@@ -38,6 +42,10 @@ const Editor = () => {
 
   useEffect(() => {
     readFile()
+
+    return () => {
+      appWindow.setTitle(store.getState('appName'))
+    }
   }, [])
 
   useEffect(() => {
@@ -80,10 +88,16 @@ const Editor = () => {
     if (!isNew && filePath) {
       await writeFile({ path: filePath, contents: contentRef.current.content })
     }
+
+    const workspacePath = store.getState('workspacePath')
+    if (!workspacePath) return
+    // 刷新列表获取最新编辑时间
+    store.updateFileList(workspacePath)
   }
 
   const readFile = async () => {
-    if (!filePath || isNew) return
+    if (!filePath || isNew || !name) return
+    appWindow.setTitle(name)
     const content = await fs.readTextFile(filePath)
     contentRef.current.content = content
     setContent(content)
