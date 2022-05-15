@@ -4,7 +4,8 @@
 )]
 
 mod frontend;
-pub mod libs;
+use frontend::read_dir;
+mod libs;
 use libs::project::{
     create_menu, create_system_tray_menu, handle_menu_event, handle_system_tray_event,
 };
@@ -15,7 +16,7 @@ fn main() {
         .on_system_tray_event(handle_system_tray_event())
         .menu(create_menu())
         .on_menu_event(handle_menu_event())
-        .invoke_handler(tauri::generate_handler![])
+        .invoke_handler(tauri::generate_handler![read_dir])
         .run(tauri::generate_context!())
         .expect("启动应用出错");
 }

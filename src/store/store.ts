@@ -2,8 +2,8 @@ import { makeAutoObservable } from 'mobx'
 import { DEFAULT_STATE, MODAL_STATE } from './state'
 import { set, get } from 'jsonuri'
 import { filterMarkdownFile } from '@/libs/utils/file'
-import { readDir } from '@tauri-apps/api/fs'
 import type IDEFAULT_STATE from './type'
+import { readDir } from '@/libs/backend'
 
 type TStateKeys = keyof IDEFAULT_STATE
 type TModalState = typeof MODAL_STATE

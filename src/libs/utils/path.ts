@@ -15,3 +15,11 @@ export function indexOfStr(str: string, search: string): number[] {
 
   return res
 }
+
+export function removeKeyInObject<T extends object>(
+  obj: T,
+  toBeRemoveKey: keyof T,
+): Omit<T, keyof T> {
+  const { [toBeRemoveKey]: _, ...otherKeys } = obj
+  return otherKeys
+}

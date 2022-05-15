@@ -1,8 +1,10 @@
-import { fs } from '@tauri-apps/api'
+import { IFsOutput } from '@/libs/backend/type'
 
 export default interface IDEFAULT_STATE {
+  appName: string
+  appVersion: string
   editorMode: 'view' | 'edit'
-  fileList: fs.FileEntry[]
+  fileList: IFsOutput[]
   workspaceRoot: string | undefined
   workspacePath: string | undefined
 }

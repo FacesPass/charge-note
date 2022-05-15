@@ -9,8 +9,7 @@
 .listItem {
   font-size: 18px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
   padding: 5px 20px;
   margin: 20px 0;
   border: 1px solid #e6e6e6;
@@ -23,11 +22,16 @@
   }
 }
 
-.name {
+.name > div {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   padding-right: 15px;
+}
+
+.lastModifyTime {
+  font-size: 12px;
+  color: #a8a8a8;
 }
 
 .tools {
