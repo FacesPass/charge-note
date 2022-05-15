@@ -1,5 +1,5 @@
 import React, { FC, memo, useEffect, useRef, useState } from 'react'
-
+import styles from './index.module.less'
 interface IProps {
   x: number
   y: number
@@ -10,7 +10,6 @@ interface IProps {
 
 const ContextMenu: FC<IProps> = ({ width = 200, x, y, visible, children }) => {
   const menuRef = useRef<HTMLDivElement>(null)
-  const [menuLayout, setMenuLayout] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
     checkIsCollision()
@@ -32,24 +31,15 @@ const ContextMenu: FC<IProps> = ({ width = 200, x, y, visible, children }) => {
       yPos = yPos - menuDom.offsetHeight
     }
 
-    setMenuLayout({ x: xPos, y: yPos })
+    menuDom.style.left = xPos + 'px'
+    menuDom.style.top = yPos + 'px'
+    menuDom.style.width = width + 'px'
   }
 
   return (
     <>
       {visible && (
-        <div
-          ref={menuRef}
-          style={{
-            backgroundColor: '#fff',
-            padding: '1px',
-            border: '1px solid #e7e7e7',
-            position: 'absolute',
-            left: menuLayout.x,
-            top: menuLayout.y,
-            width: `${width}px`,
-          }}
-        >
+        <div className={styles.container} ref={menuRef}>
           {children}
         </div>
       )}

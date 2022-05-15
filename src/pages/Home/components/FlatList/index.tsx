@@ -1,11 +1,12 @@
-import React, { FC, memo, useRef, useState } from 'react'
+import React, { FC, memo, useEffect, useRef, useState } from 'react'
 import Icon from '@/components/Icon'
 import { isEndsWithMd, isEndsWithTxt, isLegalFile } from '@/libs/utils/file'
 import { fs } from '@tauri-apps/api'
-import { Menu, Tooltip } from 'antd'
+import { Tooltip } from 'antd'
 import styles from './index.module.less'
 import ContextMenu from '@/components/ContextMenu'
 import { IFsOutput } from '@/libs/backend/type'
+import CustomMenu from './CutomMenu'
 
 interface IProps {
   className?: string
@@ -14,8 +15,26 @@ interface IProps {
 }
 
 const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
+  const listRef = useRef<HTMLDivElement | null>(null)
   const [isShowMenu, setIsShowMenu] = useState(false)
   const [menuLayout, setMenuLayout] = useState({ x: 0, y: 0 })
+  const [selectedMenuItem, setSelectedMenuItem] = useState<IFsOutput>()
+
+  useEffect(() => {
+    handleCloseMenu()
+  }, [fileList])
+
+  useEffect(() => {
+    listRef.current?.addEventListener('scroll', handleCloseMenu)
+
+    return () => {
+      listRef.current?.removeEventListener('scroll', handleCloseMenu)
+    }
+  }, [])
+
+  const handleCloseMenu = () => {
+    setIsShowMenu(false)
+  }
 
   const handleFileListSequense = (fileList: IFsOutput[]) => [
     ...fileList.filter((item) => isLegalFile(item.name)),
@@ -24,7 +43,11 @@ const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
 
   return (
     <>
-      <div className={`${styles.container} ${className}`} onClick={() => setIsShowMenu(false)}>
+      <div
+        ref={listRef}
+        className={`${styles.container} ${className}`}
+        onClick={() => setIsShowMenu(false)}
+      >
         {handleFileListSequense(fileList).length > 0 ? (
           handleFileListSequense(fileList)?.map((item) => (
             <div
@@ -41,6 +64,7 @@ const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
                 e.preventDefault()
                 setIsShowMenu(true)
                 setMenuLayout({ x: e.clientX, y: e.clientY })
+                setSelectedMenuItem(item)
               }}
             >
               <Tooltip title={item.name} mouseEnterDelay={1}>
@@ -65,12 +89,7 @@ const FlatList: FC<IProps> = ({ fileList, className, onClickItem }) => {
       </div>
 
       <ContextMenu x={menuLayout.x} y={menuLayout.y} visible={isShowMenu}>
-        <Menu
-          items={[
-            { label: '新建', key: 'new' },
-            { label: '删除', key: 'remove' },
-          ]}
-        ></Menu>
+        <CustomMenu menuItem={selectedMenuItem} />
       </ContextMenu>
     </>
   )
