@@ -23,16 +23,17 @@ const ContextMenu: FC<IProps> = ({ width = 200, x, y, visible, children }) => {
     let xPos = x
     let yPos = y
 
-    if (xPos + menuDom.offsetWidth > body.offsetWidth) {
-      xPos = xPos - menuDom.offsetWidth
+    if (xPos + width > body.offsetWidth) {
+      xPos = xPos - width
     }
 
-    if (yPos + menuDom.offsetHeight > body.offsetHeight) {
+    console.log(yPos, body.offsetHeight - 150)
+    if (yPos > body.offsetHeight - 150) {
       yPos = yPos - menuDom.offsetHeight
     }
 
-    menuDom.style.left = xPos + 'px'
-    menuDom.style.top = yPos + 'px'
+    menuDom.style.left = xPos + 5 + 'px'
+    menuDom.style.top = yPos + 5 + 'px'
     menuDom.style.width = width + 'px'
   }
 
