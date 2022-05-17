@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { app } from '@tauri-apps/api'
+import React from 'react'
 import { Modal } from 'antd'
 import { useGlobalStore } from '@/store'
 import { observer } from 'mobx-react-lite'

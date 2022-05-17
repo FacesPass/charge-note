@@ -1,4 +1,5 @@
 import DialogModal from '@/components/DialogModal'
+import { modalStorage, ModalStorageState } from '@/libs/storage/modalStorage'
 import { useGlobalStore } from '@/store'
 import { appWindow } from '@tauri-apps/api/window'
 import { Button } from 'antd'
@@ -14,12 +15,12 @@ const MaximizedModal = () => {
 
   return (
     <DialogModal
-      width={400}
+      width={350}
       footer={
         <>
           <Button
             onClick={() => {
-              localStorage.disabledMaximizeDialog = true
+              modalStorage.setState(ModalStorageState.DISABLED_MAXIMIZE, true)
               closeModal()
             }}
           >
@@ -42,7 +43,7 @@ const MaximizedModal = () => {
       visible={store.getModalState('isShowMaximizedModal')}
       onCancel={closeModal}
     >
-      是否切换到全屏模式以获得更好的编辑体验?
+      是否切换到最大化以获得更好的编辑体验?
     </DialogModal>
   )
 }
