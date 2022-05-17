@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { indexOfStr, splitPath } from '@/libs/utils/path'
 import { useGlobalStore } from '@/store'
-import { fs } from '@tauri-apps/api'
 import { observer } from 'mobx-react-lite'
 import styles from './index.module.less'
 
@@ -18,7 +17,7 @@ const PathTracing: FC<IProps> = ({ className }) => {
     handlePathTracing()
   }, [workspacePath])
 
-  const handleClickPath = async (path: string, index: number) => {
+  const clickPathTrace = async (path: string, index: number) => {
     if (!workspacePath) return
     // 处理有相同名称的子目录的情况
     const strPositions = indexOfStr(workspacePath, path)
@@ -46,12 +45,7 @@ const PathTracing: FC<IProps> = ({ className }) => {
       {followRootPaths.map((path, index) => (
         <span key={index}>
           {index === 0 && <span>{'~'}</span>}
-          <span
-            className={styles.path}
-            onClick={() => {
-              handleClickPath(path, index)
-            }}
-          >
+          <span className={styles.path} onClick={() => clickPathTrace(path, index)}>
             {path}
           </span>
           {index !== followRootPaths.length - 1 && <span>{' > '}</span>}

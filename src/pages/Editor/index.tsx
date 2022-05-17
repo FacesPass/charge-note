@@ -12,16 +12,18 @@ import mediumZoom from '@bytemd/plugin-medium-zoom'
 import math from '@bytemd/plugin-math'
 import mathZh from '@bytemd/plugin-math/locales/zh_Hans.json'
 import highlight from '@bytemd/plugin-highlight-ssr'
-import 'bytemd/dist/index.min.css'
-import './reset.less'
-import 'juejin-markdown-themes/dist/juejin.min.css'
-import 'highlight.js/styles/default.css'
+
 import { fs } from '@tauri-apps/api'
 import eventEmitter, { MenuEvent } from '@/libs/events'
 import { writeFile } from '@tauri-apps/api/fs'
 import { observer } from 'mobx-react-lite'
 import { appWindow } from '@tauri-apps/api/window'
 import { markdownBodyLayout } from '@/libs/dom'
+import { modalStorage, ModalStorageState } from '@/libs/storage/modalStorage'
+import 'bytemd/dist/index.min.css'
+import './reset.less'
+import 'juejin-markdown-themes/dist/juejin.min.css'
+import 'highlight.js/styles/default.css'
 
 const Editor = () => {
   const store = useGlobalStore()
@@ -71,7 +73,7 @@ const Editor = () => {
         store.setModalState('isShowMaximizedModal', false)
       }
     }
-    if (localStorage.disabledMaximizeDialog) return
+    if (modalStorage.getState(ModalStorageState.DISABLED_MAXIMIZE)) return
 
     const isMaximize = await appWindow.isMaximized()
     if (isMaximize) return
