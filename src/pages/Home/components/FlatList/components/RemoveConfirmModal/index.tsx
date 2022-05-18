@@ -1,6 +1,5 @@
-import React, { FC } from 'react'
+import React, { FC, memo } from 'react'
 import DialogModal from '@/components/DialogModal'
-import { observer } from 'mobx-react-lite'
 import { Button } from 'antd'
 import { modalStorage, ModalStorageState } from '@/libs/storage/modalStorage'
 
@@ -38,4 +37,4 @@ const RemoveConfirmModal: FC<IProps> = ({ visible, onOk, onCancel }) => {
   )
 }
 
-export default observer(RemoveConfirmModal)
+export default memo(RemoveConfirmModal)

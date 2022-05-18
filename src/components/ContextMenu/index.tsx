@@ -1,4 +1,4 @@
-import React, { FC, memo, useEffect, useRef, useState } from 'react'
+import React, { FC, memo, useEffect, useRef } from 'react'
 import styles from './index.module.less'
 interface IProps {
   x: number
@@ -13,7 +13,7 @@ const ContextMenu: FC<IProps> = ({ width = 200, x, y, visible, children }) => {
 
   useEffect(() => {
     checkIsCollision()
-  }, [x, y])
+  }, [visible, x, y])
 
   const checkIsCollision = () => {
     const body = document.body
@@ -27,7 +27,6 @@ const ContextMenu: FC<IProps> = ({ width = 200, x, y, visible, children }) => {
       xPos = xPos - width
     }
 
-    console.log(yPos, body.offsetHeight - 150)
     if (yPos > body.offsetHeight - 150) {
       yPos = yPos - menuDom.offsetHeight
     }

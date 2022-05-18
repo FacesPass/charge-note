@@ -1,7 +1,6 @@
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { isEndsWithMd, isEndsWithTxt, isLegalFile } from '@/libs/utils/file'
 import { fs, shell } from '@tauri-apps/api'
-import styles from './index.module.less'
 import ContextMenu from '@/components/ContextMenu'
 import { IFsOutput } from '@/libs/backend/type'
 import CustomMenu, { IMenuItem } from './components/CustomMenu'
@@ -14,7 +13,9 @@ import { modalStorage, ModalStorageState } from '@/libs/storage/modalStorage'
 import { observer } from 'mobx-react-lite'
 import CreateInputModal from './components/CreateInputModal'
 import RemoveConfirmModal from './components/RemoveConfirmModal'
-import { useLatest, useMount, useSetState, useUnMount } from '@/libs/hooks'
+import { useMount, useSetState, useUnMount } from '@/libs/hooks'
+import debounce from 'lodash.debounce'
+import styles from './index.module.less'
 
 interface IProps {
   className?: string
@@ -24,15 +25,16 @@ interface IProps {
 const FlatList: FC<IProps> = ({ fileList, className }) => {
   const store = useGlobalStore()
   const navigate = useNavigate()
+  const selectedMenuItemRef = useRef<IFsOutput | null>(null)
   const listRef = useRef<HTMLDivElement | null>(null)
-  const [isShowMenu, setIsShowMenu] = useState(false)
+  const [menuState, setMenuState] = useSetState({ isShow: false, x: 0, y: 0 })
   const [modalState, setModalState] = useSetState({
     isShowCreateFileModal: false,
     isShowCreateDirModal: false,
     isShowRemoveConfirmModal: false,
   })
-  const [menuLayout, setMenuLayout] = useState({ x: 0, y: 0 })
-  const [selectedMenuItem, setSelectedMenuItem] = useLatest<IFsOutput | null>(null)
+  const isPageMenu = selectedMenuItemRef.current === null
+  const isDir = !!selectedMenuItemRef.current?.children
 
   useEffect(() => {
     closeMenu()
@@ -41,16 +43,15 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
   useMount(() => listRef.current?.addEventListener('scroll', closeMenu))
   useUnMount(() => listRef.current?.removeEventListener('scroll', closeMenu))
 
-  const itemMenus: IMenuItem[] = useMemo(
+  const menus: IMenuItem[] = useMemo(
     () => [
       {
         label: '新建文件',
         key: 'newFile',
-        isShow: !!selectedMenuItem?.children,
+        isShow: isDir || isPageMenu,
         onClick: () => {
           closeMenu()
           setModalState({
-            ...modalState,
             isShowCreateFileModal: true,
           })
         },
@@ -58,12 +59,10 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
       {
         label: '新建文件夹',
         key: 'newDir',
-        isShow: !!selectedMenuItem?.children,
+        isShow: isDir || isPageMenu,
         onClick: () => {
-          if (!selectedMenuItem) return
           closeMenu()
           setModalState({
-            ...modalState,
             isShowCreateDirModal: true,
           })
         },
@@ -71,10 +70,9 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
       {
         label: '打开所在位置',
         key: 'openInExplorer',
+        isShow: isDir || isPageMenu,
         onClick: async () => {
           try {
-            console.log('selectedMenuItem', selectedMenuItem)
-            if (!selectedMenuItem) return
             const workspacePath = store.getState('workspacePath')
             workspacePath && shell.open(workspacePath)
             closeMenu()
@@ -86,8 +84,10 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
       {
         label: '复制路径',
         key: 'copyPath',
+        isShow: !isPageMenu,
         onClick: async () => {
           try {
+            const selectedMenuItem = selectedMenuItemRef.current
             if (!selectedMenuItem) return
             await copy(selectedMenuItem.path)
             message.success('已复制到剪贴板')
@@ -100,7 +100,9 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
       {
         label: '删除',
         key: 'remove',
+        isShow: !isPageMenu,
         onClick: async () => {
+          const selectedMenuItem = selectedMenuItemRef.current
           if (!selectedMenuItem) return
           closeMenu()
           try {
@@ -120,7 +122,6 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
               }
 
               setModalState({
-                ...modalState,
                 isShowRemoveConfirmModal: true,
               })
             } else {
@@ -133,12 +134,10 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
         },
       },
     ],
-    [selectedMenuItem],
+    [selectedMenuItemRef.current],
   )
 
-  const closeMenu = () => {
-    setIsShowMenu(false)
-  }
+  const closeMenu = debounce(() => setMenuState({ isShow: false }), 100, { leading: true })
 
   const refreshFileList = () => {
     const workspacePath = store.getState('workspacePath')
@@ -147,14 +146,23 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
   }
 
   const createDir = async (inputVal: string) => {
-    if (!selectedMenuItem) return
+    const selectedMenuItem = selectedMenuItemRef.current
     try {
-      const pathToCreate = `${selectedMenuItem.path}\\${inputVal}`
+      const workspacePath = store.getState('workspacePath')
+      if (!workspacePath) return
+
+      let pathToCreate
+      if (selectedMenuItem) {
+        pathToCreate = `${selectedMenuItem.path}\\${inputVal}`
+      } else {
+        pathToCreate = `${store.getState('workspacePath')}\\${inputVal}`
+      }
+
       await fs.createDir(pathToCreate)
       store.updateFileList(pathToCreate)
       store.setState('workspacePath', pathToCreate)
+
       setModalState({
-        ...modalState,
         isShowCreateDirModal: false,
       })
     } catch (e) {
@@ -163,14 +171,27 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
   }
 
   const createFile = async (inputVal: string) => {
-    if (!selectedMenuItem) return
+    const selectedMenuItem = selectedMenuItemRef.current
     try {
-      const pathToCreate = `${selectedMenuItem.path}\\${inputVal}.md`
+      const workspacePath = store.getState('workspacePath')
+      if (!workspacePath) return
+
+      let pathToCreate
+      if (selectedMenuItem) {
+        pathToCreate = `${selectedMenuItem.path}\\${inputVal}.md`
+      } else {
+        pathToCreate = `${workspacePath}\\${inputVal}.md`
+      }
       await fs.writeFile({ path: pathToCreate, contents: '' })
-      store.updateFileList(selectedMenuItem.path)
-      store.setState('workspacePath', selectedMenuItem.path)
+
+      if (selectedMenuItem) {
+        store.updateFileList(selectedMenuItem.path)
+        store.setState('workspacePath', selectedMenuItem.path)
+      } else {
+        store.updateFileList(workspacePath)
+      }
+
       setModalState({
-        ...modalState,
         isShowCreateFileModal: false,
       })
     } catch (e) {
@@ -179,12 +200,12 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
   }
 
   const removeDirInModal = async () => {
+    const selectedMenuItem = selectedMenuItemRef.current
     if (!selectedMenuItem) return
 
     await fs.removeDir(selectedMenuItem.path, { recursive: true })
     refreshFileList()
     setModalState({
-      ...modalState,
       isShowRemoveConfirmModal: false,
     })
   }
@@ -207,17 +228,25 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
     navigate('/editor', { state: { path, name, isNew: false } })
   }
 
-  const handleFileListSequense = (fileList: IFsOutput[]) => [
-    ...fileList.filter((item) => isLegalFile(item.name)),
-    ...fileList.filter((item) => item.children),
-  ]
+  const handleFileListSequense = useCallback(
+    (fileList: IFsOutput[]) => [
+      ...fileList.filter((item) => isLegalFile(item.name)),
+      ...fileList.filter((item) => item.children),
+    ],
+    [fileList],
+  )
 
   return (
     <>
       <div
         ref={listRef}
         className={`${styles.container} ${className}`}
-        onClick={() => setIsShowMenu(false)}
+        onClick={() => setMenuState({ isShow: false })}
+        onContextMenu={(e) => {
+          e.preventDefault()
+          setMenuState({ isShow: true, x: e.clientX, y: e.clientY })
+          selectedMenuItemRef.current = null
+        }}
       >
         {handleFileListSequense(fileList).length > 0 ? (
           handleFileListSequense(fileList)?.map((item) => (
@@ -225,17 +254,17 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
               className={styles.listItem}
               key={item.path}
               onClick={() => {
-                if (isShowMenu) {
-                  setIsShowMenu(false)
+                if (menuState.isShow) {
+                  setMenuState({ isShow: false })
                   return
                 }
                 clickFile(item)
               }}
               onContextMenu={(e) => {
+                e.stopPropagation()
                 e.preventDefault()
-                setIsShowMenu(true)
-                setMenuLayout({ x: e.clientX, y: e.clientY })
-                setSelectedMenuItem(item)
+                setMenuState({ isShow: true, x: e.clientX, y: e.clientY })
+                selectedMenuItemRef.current = item
               }}
             >
               <div className={styles.name}>
@@ -258,8 +287,8 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
         )}
       </div>
 
-      <ContextMenu x={menuLayout.x} y={menuLayout.y} visible={isShowMenu}>
-        <CustomMenu menus={itemMenus} />
+      <ContextMenu x={menuState.x} y={menuState.y} visible={menuState.isShow}>
+        <CustomMenu menus={menus} />
       </ContextMenu>
 
       <CreateInputModal
