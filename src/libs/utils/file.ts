@@ -35,6 +35,7 @@ export function filterMarkdownFile(fileList: IFsOutput[]) {
         isLegalFile(file.name) ||
         (file.children && file.children?.length > 0),
     )
+    .sort((a, b) => (b.create_time as number) - (a.create_time as number))
     .map((file) => {
       if (file.children) {
         file.children = filterMarkdownFile(file.children)
