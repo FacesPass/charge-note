@@ -4,6 +4,7 @@ const eventEmitter = new EventEmitter()
 
 export enum MenuEvent {
   Back = 'back',
+  Save = 'save',
   ToggleEditorMode = 'toggleEditorMode',
 }
 

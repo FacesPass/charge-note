@@ -12,14 +12,16 @@ import mediumZoom from '@bytemd/plugin-medium-zoom'
 import math from '@bytemd/plugin-math'
 import mathZh from '@bytemd/plugin-math/locales/zh_Hans.json'
 import highlight from '@bytemd/plugin-highlight-ssr'
-
-import { fs } from '@tauri-apps/api'
+import { dialog, fs } from '@tauri-apps/api'
 import eventEmitter, { MenuEvent } from '@/libs/events'
 import { writeFile } from '@tauri-apps/api/fs'
 import { observer } from 'mobx-react-lite'
 import { appWindow } from '@tauri-apps/api/window'
 import { markdownBodyLayout } from '@/libs/dom'
 import { modalStorage, ModalStorageState } from '@/libs/storage/modalStorage'
+import { useMount, useUnMount } from '@/libs/hooks'
+import { message } from 'antd'
+import styles from './index.module.less'
 import 'bytemd/dist/index.min.css'
 import './reset.less'
 import 'juejin-markdown-themes/dist/juejin.min.css'
@@ -38,33 +40,24 @@ const Editor = () => {
     path?: string
     name?: string
   }
-
-  const contentRef = useRef({ content: '' })
-  const [content, setContent] = useState('')
-
-  useEffect(() => {
-    readFile()
-
-    return () => {
-      appWindow.setTitle(store.getState('appName'))
-    }
-  }, [])
+  const stateRef = useRef({ contents: '', savePath: '', isSave: false })
+  const [contents, setContents] = useState('')
 
   useEffect(() => {
     toggleMode()
-
-    return () => {
-      eventEmitter.off(MenuEvent.ToggleEditorMode)
-    }
   }, [editorMode])
 
-  useEffect(() => {
+  useMount(() => {
+    readFile()
     eventEmitter.on(MenuEvent.Back, back)
+    eventEmitter.on(MenuEvent.Save, save)
+  })
 
-    return () => {
-      eventEmitter.off(MenuEvent.Back)
-    }
-  }, [])
+  useUnMount(() => {
+    appWindow.setTitle(store.getState('appName'))
+    eventEmitter.off(MenuEvent.Back)
+    eventEmitter.off(MenuEvent.Save)
+  })
 
   const toggleMode = async () => {
     if (editorMode === 'view') {
@@ -85,10 +78,36 @@ const Editor = () => {
     })
   }
 
+  const save = async () => {
+    const workspacePath = store.getState('workspacePath')
+    let savePath = stateRef.current.savePath
+    if (workspacePath || savePath) {
+      if (!stateRef.current.savePath) {
+        savePath = `${workspacePath}\\${+new Date()}.md`
+        stateRef.current.savePath = savePath
+      } else {
+        savePath = stateRef.current.savePath
+      }
+    } else {
+      savePath = await dialog.save({
+        filters: [
+          { name: 'markdown文件', extensions: ['md'] },
+          { name: 'txt文本', extensions: ['txt'] },
+        ],
+      })
+      stateRef.current.savePath = savePath
+    }
+
+    await fs.writeFile({ path: savePath, contents: stateRef.current.contents })
+    appWindow.setTitle(savePath.substring(savePath.lastIndexOf('\\') + 1))
+    stateRef.current.isSave = true
+    message.success('保存成功')
+  }
+
   const back = async () => {
     // 编辑模式返回时直接保存
     if (!isNew && filePath) {
-      await writeFile({ path: filePath, contents: contentRef.current.content })
+      await writeFile({ path: filePath, contents: stateRef.current.contents })
     }
 
     const workspacePath = store.getState('workspacePath')
@@ -99,11 +118,13 @@ const Editor = () => {
   }
 
   const readFile = async () => {
-    if (!filePath || isNew || !name) return
+    const workspacePath = store.getState('workspacePath')
+    if (!filePath || isNew || !name || !workspacePath) return
     appWindow.setTitle(name)
-    const content = await fs.readTextFile(filePath)
-    contentRef.current.content = content
-    setContent(content)
+    const contents = await fs.readTextFile(filePath)
+    stateRef.current.contents = contents
+    stateRef.current.savePath = `${workspacePath}\\${name}`
+    setContents(contents)
   }
 
   const plugins = useMemo(
@@ -120,21 +141,22 @@ const Editor = () => {
   )
 
   return (
-    <>
+    <div className={styles.container}>
       {store.getState('editorMode') === 'edit' ? (
         <MDEditor
           locale={zh}
-          value={content}
+          value={contents}
           plugins={plugins}
           onChange={(v) => {
-            setContent(v)
-            contentRef.current.content = v
+            setContents(v)
+            stateRef.current.contents = v
+            stateRef.current.isSave = false
           }}
         />
       ) : (
-        <Viewer value={content} plugins={plugins} />
+        <Viewer value={contents} plugins={plugins} />
       )}
-    </>
+    </div>
   )
 }
 

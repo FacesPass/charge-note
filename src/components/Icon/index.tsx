@@ -2,7 +2,7 @@ import React, { memo, FC } from 'react'
 import { createFromIconfontCN } from '@ant-design/icons'
 
 const AntIcon = createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_3388204_vppptxaxduh.js', // 在 iconfont.cn 上生成
+  scriptUrl: '//at.alicdn.com/t/font_3388204_7s0e0jedtlb.js', // 在 iconfont.cn 上生成
 })
 
 interface IProps {

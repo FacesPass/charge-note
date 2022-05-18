@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react'
 import { isEndsWithMd, isEndsWithTxt, isLegalFile } from '@/libs/utils/file'
 import { fs, shell } from '@tauri-apps/api'
 import ContextMenu from '@/components/ContextMenu'
@@ -11,7 +11,7 @@ import { useGlobalStore } from '@/store'
 import { useNavigate } from 'react-router-dom'
 import { modalStorage, ModalStorageState } from '@/libs/storage/modalStorage'
 import { observer } from 'mobx-react-lite'
-import CreateInputModal from './components/CreateInputModal'
+import CreateInputModal from '@/components/CreateInputModal'
 import RemoveConfirmModal from './components/RemoveConfirmModal'
 import { useMount, useSetState, useUnMount } from '@/libs/hooks'
 import debounce from 'lodash.debounce'
@@ -70,7 +70,6 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
       {
         label: '打开所在位置',
         key: 'openInExplorer',
-        isShow: isDir || isPageMenu,
         onClick: async () => {
           try {
             const workspacePath = store.getState('workspacePath')

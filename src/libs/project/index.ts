@@ -22,8 +22,4 @@ export function handleGlobalEvent() {
       e.preventDefault()
     }
   })
-
-  // window.oncontextmenu = () => {
-  //   return false
-  // }
 }

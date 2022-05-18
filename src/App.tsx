@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { routeConfig } from '@/routes'
 import { useRoutes } from 'react-router-dom'
 import Menu from './layout/Menu'
-import Modal from './layout/Modal'
+import Modal from './layout/GlobalModal'
 import { useGlobalStore } from './store'
 import { app } from '@tauri-apps/api'
 

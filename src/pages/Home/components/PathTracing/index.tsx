@@ -41,7 +41,7 @@ const PathTracing: FC<IProps> = ({ className }) => {
   }
 
   return (
-    <div className={`${styles.container} ${className}`}>
+    <div className={`${styles.container} ${className}`} onContextMenu={(e) => e.preventDefault()}>
       {followRootPaths.map((path, index) => (
         <span key={index}>
           {index === 0 && <span>{'~'}</span>}

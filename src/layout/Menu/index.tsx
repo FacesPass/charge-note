@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { appWindow } from '@tauri-apps/api/window'
-import { useLocation, Link } from 'react-router-dom'
-import { dialog } from '@tauri-apps/api'
+import { useLocation, Link, useNavigate } from 'react-router-dom'
+import { dialog, fs } from '@tauri-apps/api'
 import { useGlobalStore } from '@/store'
 import eventEmitter, { MenuEvent } from '@/libs/events'
 import { observer } from 'mobx-react-lite'
@@ -9,15 +9,14 @@ import styles from './index.module.less'
 import MenuItem from './components/MenuItem'
 
 function Menu() {
+  const navigate = useNavigate()
   const location = useLocation()
   const store = useGlobalStore()
   const editorMode = store.getState('editorMode')
   const [isInEditor, setIsInEditor] = useState(false)
 
   useEffect(() => {
-    const isInEditor = location.pathname === '/editor'
-
-    setIsInEditor(isInEditor)
+    setIsInEditor(location.pathname === '/editor')
   }, [location])
 
   const handleWorkSpace = async () => {
@@ -32,9 +31,18 @@ function Menu() {
     }
   }
 
+  const toEditor = async () => {
+    store.setState('editorMode', 'edit')
+    const isMaximized = await appWindow.isMaximized()
+    if (!isMaximized) {
+      store.setModalState('isShowMaximizedModal', true)
+    }
+    navigate('/editor', { state: { isNew: true } })
+  }
+
   return (
     <>
-      <div className={styles.container}>
+      <div className={styles.container} onContextMenu={(e) => e.preventDefault()}>
         <div>
           {isInEditor && (
             <>
@@ -47,13 +55,19 @@ function Menu() {
               </Link>
               <MenuItem
                 style={{ marginRight: '5px' }}
+                toolTipTitle='保存'
+                fontClass='icon-baocun'
+                onClick={() => eventEmitter.emit(MenuEvent.Save)}
+              />
+              <MenuItem
+                style={{ marginRight: '5px' }}
                 onClick={async () => {
                   const isMaximized = await appWindow.isMaximized()
                   if (isMaximized) return
                   appWindow.center()
                 }}
                 toolTipTitle='居中'
-                fontClass='icon-pingmujuzhong_screenCenter_01'
+                fontClass='icon-juzhong'
               />
             </>
           )}
@@ -81,10 +95,7 @@ function Menu() {
                 fontClass='icon-dakaiwenjianjia'
                 onClick={handleWorkSpace}
               />
-
-              <Link to='/editor' state={{ isNew: true }}>
-                <MenuItem toolTipTitle='新建' fontClass='icon-add' />
-              </Link>
+              <MenuItem onClick={toEditor} toolTipTitle='新建' fontClass='icon-add' />
             </>
           ) : (
             <MenuItem
