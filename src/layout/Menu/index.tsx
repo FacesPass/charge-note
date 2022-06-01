@@ -5,8 +5,8 @@ import { dialog, fs } from '@tauri-apps/api'
 import { useGlobalStore } from '@/store'
 import eventEmitter, { MenuEvent } from '@/libs/events'
 import { observer } from 'mobx-react-lite'
-import styles from './index.module.less'
 import MenuItem from './components/MenuItem'
+import styles from './index.module.less'
 
 function Menu() {
   const navigate = useNavigate()
@@ -33,11 +33,8 @@ function Menu() {
 
   const toEditor = async () => {
     store.setState('editorMode', 'edit')
-    const isMaximized = await appWindow.isMaximized()
-    if (!isMaximized) {
-      store.setModalState('isShowMaximizedModal', true)
-    }
-    navigate('/editor', { state: { isNew: true } })
+
+    navigate('/editor', { state: { filePath: '' } })
   }
 
   return (
@@ -46,21 +43,22 @@ function Menu() {
         <div>
           {isInEditor && (
             <>
-              <Link to='/' onClick={() => eventEmitter.emit(MenuEvent.Back)}>
-                <MenuItem
-                  style={{ marginRight: '5px' }}
-                  toolTipTitle='返回'
-                  fontClass='icon-fanhui'
-                />
-              </Link>
               <MenuItem
-                style={{ marginRight: '5px' }}
+                onClick={() => eventEmitter.emit(MenuEvent.Back)}
+                className={styles.marginR}
+                toolTipTitle='返回'
+                fontClass='icon-fanhui'
+              />
+              <MenuItem
+                className={`${styles.marginR} ${
+                  store.getEditorState('isChanged') && styles.actionInfo
+                }`}
                 toolTipTitle='保存'
                 fontClass='icon-baocun'
                 onClick={() => eventEmitter.emit(MenuEvent.Save)}
               />
               <MenuItem
-                style={{ marginRight: '5px' }}
+                className={styles.marginR}
                 onClick={async () => {
                   const isMaximized = await appWindow.isMaximized()
                   if (isMaximized) return
@@ -72,7 +70,7 @@ function Menu() {
             </>
           )}
           <MenuItem
-            style={{ marginRight: '5px' }}
+            className={styles.marginR}
             toolTipTitle='关于'
             fontClass='icon-guanyu'
             onClick={() => store.setModalState('isShowAboutModal', true)}
@@ -89,7 +87,7 @@ function Menu() {
           {!isInEditor ? (
             <>
               <MenuItem
-                style={{ marginRight: '5px' }}
+                className={styles.marginR}
                 toolTipTitle='选择工作目录'
                 toolTipPlacement='bottomLeft'
                 fontClass='icon-dakaiwenjianjia'

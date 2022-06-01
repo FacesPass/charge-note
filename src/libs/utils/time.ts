@@ -23,3 +23,39 @@ export function timestampToTime(
     return dayjs(_timestamp).format(format)
   }
 }
+
+export function getCurrentTime(
+  noTime = true,
+  isChineseTimeSplit = false,
+  dateAndTimeSplitStr = '',
+) {
+  return `${getDate()}${dateAndTimeSplitStr}${noTime ? '' : getTime(isChineseTimeSplit)}`
+}
+
+export function getDate() {
+  const time = new Date()
+  const year = time.getFullYear()
+  const month = time.getMonth() + 1
+  const day = time.getDate()
+  return `${year}-${prefixZero(month)}-${prefixZero(day)}`
+}
+
+export function getTime(isChineseTimeSplit = false) {
+  const time = new Date()
+  const hour = time.getHours()
+  const min = time.getMinutes()
+  const sec = time.getSeconds()
+  if (isChineseTimeSplit) {
+    return `${prefixZero(hour)}时${prefixZero(min)}分${prefixZero(sec)}秒`
+  } else {
+    return `${prefixZero(hour)}:${prefixZero(min)}:${prefixZero(sec)}`
+  }
+}
+
+function prefixZero(v: number) {
+  let _v = String(v)
+  if (v < 10) {
+    _v = '0' + _v
+  }
+  return _v
+}

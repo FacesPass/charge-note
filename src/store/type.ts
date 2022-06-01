@@ -13,3 +13,7 @@ export interface IModalState {
   isShowAboutModal: boolean
   isShowMaximizedModal: boolean
 }
+
+export interface IEditorState {
+  isChanged: boolean
+}

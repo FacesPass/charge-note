@@ -33,14 +33,23 @@ export function filterMarkdownFile(fileList: IFsOutput[]) {
       (file) =>
         file.name !== '.git' ||
         isLegalFile(file.name) ||
-        (file.children && file.children?.length > 0),
+        (file.children && file.children.length > 0),
     )
     .sort((a, b) => (b.create_time as number) - (a.create_time as number))
     .map((file) => {
-      if (file.children) {
-        file.children = filterMarkdownFile(file.children)
+      const _file = file
+      if (_file.children) {
+        _file.children = filterMarkdownFile(_file.children)
       }
-      file.create_time = timestampToTime(file.create_time)
-      return file
+      _file.create_time = timestampToTime(_file.create_time)
+      return _file
     })
+}
+
+/** 让符合规则的文件往前排 */
+export function orderFileListSequense(fileList: IFsOutput[]) {
+  return [
+    ...fileList.filter((item) => isLegalFile(item.name)),
+    ...fileList.filter((item) => item.children),
+  ]
 }

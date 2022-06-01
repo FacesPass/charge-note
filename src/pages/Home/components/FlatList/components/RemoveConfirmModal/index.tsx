@@ -1,7 +1,7 @@
 import React, { FC, memo } from 'react'
 import DialogModal from '@/components/DialogModal'
 import { Button } from 'antd'
-import { modalStorage, ModalStorageState } from '@/libs/storage/modalStorage'
+import { modalStorage, ModalStorageState } from '@/storage/modalStorage'
 
 interface IProps {
   visible?: boolean

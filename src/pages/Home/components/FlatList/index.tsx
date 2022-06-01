@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react'
-import { isEndsWithMd, isEndsWithTxt, isLegalFile } from '@/libs/utils/file'
+import React, { FC, useEffect, useMemo, useRef } from 'react'
+import { isEndsWithMd, isEndsWithTxt } from '@/libs/utils/file'
 import { fs, shell } from '@tauri-apps/api'
 import ContextMenu from '@/components/ContextMenu'
 import { IFsOutput } from '@/libs/backend/type'
@@ -9,7 +9,7 @@ import { message } from 'antd'
 import FileItem from './components/FileItem'
 import { useGlobalStore } from '@/store'
 import { useNavigate } from 'react-router-dom'
-import { modalStorage, ModalStorageState } from '@/libs/storage/modalStorage'
+import { modalStorage, ModalStorageState } from '@/storage/modalStorage'
 import { observer } from 'mobx-react-lite'
 import CreateInputModal from '@/components/CreateInputModal'
 import RemoveConfirmModal from './components/RemoveConfirmModal'
@@ -95,6 +95,16 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
             message.error('复制失败')
           }
         },
+      },
+      {
+        label: '复制',
+        key: 'copy',
+        isShow: !isPageMenu,
+      },
+      {
+        label: '剪切',
+        key: 'cut',
+        isShow: !isPageMenu,
       },
       {
         label: '删除',
@@ -224,16 +234,8 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
   const openFile = ({ name, path }: fs.FileEntry) => {
     if (!name || !path) return
 
-    navigate('/editor', { state: { path, name, isNew: false } })
+    navigate('/editor', { state: { filePath: path, name } })
   }
-
-  const handleFileListSequense = useCallback(
-    (fileList: IFsOutput[]) => [
-      ...fileList.filter((item) => isLegalFile(item.name)),
-      ...fileList.filter((item) => item.children),
-    ],
-    [fileList],
-  )
 
   return (
     <>
@@ -247,8 +249,8 @@ const FlatList: FC<IProps> = ({ fileList, className }) => {
           selectedMenuItemRef.current = null
         }}
       >
-        {handleFileListSequense(fileList).length > 0 ? (
-          handleFileListSequense(fileList)?.map((item) => (
+        {fileList?.length > 0 ? (
+          fileList.map((item) => (
             <div
               className={styles.listItem}
               key={item.path}

@@ -1,5 +1,5 @@
 import DialogModal from '@/components/DialogModal'
-import { modalStorage, ModalStorageState } from '@/libs/storage/modalStorage'
+import { modalStorage, ModalStorageState } from '@/storage/modalStorage'
 import { useGlobalStore } from '@/store'
 import { appWindow } from '@tauri-apps/api/window'
 import { Button } from 'antd'
